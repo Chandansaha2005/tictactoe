@@ -1,0 +1,534 @@
+ :root {
+     --primary-bg: #0a0a1a;
+     --secondary-bg: #12122a;
+     --neon-blue: #00f3ff;
+     --neon-pink: #ff00e5;
+     --neon-purple: #9d00ff;
+     --neon-green: #00ff8e;
+     --glass-bg: rgba(20, 20, 40, 0.6);
+     --glass-border: rgba(255, 255, 255, 0.1);
+ }
+
+ * {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+     font-family: 'Poppins', sans-serif;
+     font-weight: 500;
+ }
+
+ body {
+     background-color: var(--primary-bg);
+     color: white;
+     min-height: 100vh;
+     overflow-x: hidden;
+ }
+
+ .neon-text-blue {
+     color: var(--neon-blue);
+     text-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue);
+ }
+
+ .neon-text-pink {
+     color: var(--neon-pink);
+     text-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink);
+ }
+
+ .neon-text-purple {
+     color: var(--neon-purple);
+     text-shadow: 0 0 5px var(--neon-purple), 0 0 10px var(--neon-purple), 0 0 20px var(--neon-purple);
+ }
+
+ .neon-border-blue {
+     border: 2px solid var(--neon-blue);
+     box-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue);
+ }
+
+ .neon-border-pink {
+     border: 2px solid var(--neon-pink);
+     box-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink);
+ }
+
+ .neon-border-purple {
+     border: 2px solid var(--neon-purple);
+     box-shadow: 0 0 5px var(--neon-purple), 0 0 10px var(--neon-purple);
+ }
+
+ .glass-panel {
+     background: var(--glass-bg);
+     backdrop-filter: blur(10px);
+     -webkit-backdrop-filter: blur(10px);
+     border: 1px solid var(--glass-border);
+     border-radius: 10px;
+ }
+
+ .btn {
+     position: relative;
+     overflow: hidden;
+     transition: all 0.3s ease;
+     z-index: 1;
+     font-weight: 600;
+ }
+
+ .btn::before {
+     content: '';
+     position: absolute;
+     top: 0;
+     left: -100%;
+     width: 100%;
+     height: 100%;
+     background: rgba(255, 255, 255, 0.1);
+     transition: all 0.3s ease;
+     z-index: -1;
+ }
+
+ .btn:hover::before {
+     left: 0;
+ }
+
+ .btn:hover {
+     transform: translateY(-3px);
+     box-shadow: 0 7px 15px rgba(0, 0, 0, 0.3);
+ }
+
+ .btn:active {
+     transform: translateY(1px);
+ }
+
+ .mode-card {
+     position: relative;
+     cursor: pointer;
+     transition: all 0.3s ease;
+     overflow: hidden;
+     height: 140px;
+ }
+
+ .mode-card::before {
+     content: '';
+     position: absolute;
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 100%;
+     background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+     z-index: 1;
+     opacity: 0;
+     transition: opacity 0.3s ease;
+ }
+
+ .mode-card:hover::before {
+     opacity: 1;
+ }
+
+ .mode-card:hover {
+     transform: translateY(-5px);
+ }
+
+ .mode-card.selected {
+     transform: translateY(-5px);
+ }
+
+ .mode-card.classic.selected {
+     box-shadow: 0 0 15px var(--neon-blue), 0 0 30px rgba(0, 243, 255, 0.3);
+ }
+
+ .mode-card.twist.selected {
+     box-shadow: 0 0 15px var(--neon-purple), 0 0 30px rgba(157, 0, 255, 0.3);
+ }
+
+ .toggle-switch {
+     position: relative;
+     display: inline-block;
+     width: 60px;
+     height: 34px;
+ }
+
+ .toggle-switch input {
+     opacity: 0;
+     width: 0;
+     height: 0;
+ }
+
+ .toggle-slider {
+     position: absolute;
+     cursor: pointer;
+     top: 0;
+     left: 0;
+     right: 0;
+     bottom: 0;
+     background-color: rgba(255, 255, 255, 0.2);
+     transition: .4s;
+     border-radius: 34px;
+ }
+
+ .toggle-slider:before {
+     position: absolute;
+     content: "";
+     height: 26px;
+     width: 26px;
+     left: 4px;
+     bottom: 4px;
+     background-color: white;
+     transition: .4s;
+     border-radius: 50%;
+ }
+
+ input:checked+.toggle-slider {
+     background-color: var(--neon-purple);
+     box-shadow: 0 0 5px var(--neon-purple), 0 0 10px var(--neon-purple);
+ }
+
+ input:checked+.toggle-slider:before {
+     transform: translateX(26px);
+ }
+
+ .game-cell {
+     position: relative;
+     cursor: pointer;
+     border-radius: 5px;
+     transition: all 0.3s ease;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     font-size: 3rem;
+     font-weight: bold;
+ }
+
+ .game-cell:hover {
+     background: rgba(255, 255, 255, 0.1);
+ }
+
+ .x-marker {
+     position: relative;
+     width: 60%;
+     height: 60%;
+ }
+
+ .x-marker::before,
+ .x-marker::after {
+     content: '';
+     position: absolute;
+     top: 50%;
+     left: 50%;
+     width: 100%;
+     height: 8px;
+     background: var(--neon-blue);
+     border-radius: 4px;
+     box-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue);
+ }
+
+ .x-marker::before {
+     transform: translate(-50%, -50%) rotate(45deg);
+ }
+
+ .x-marker::after {
+     transform: translate(-50%, -50%) rotate(-45deg);
+ }
+
+ .o-marker {
+     width: 60%;
+     height: 60%;
+     border: 8px solid var(--neon-pink);
+     border-radius: 50%;
+     box-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink), inset 0 0 5px var(--neon-pink);
+ }
+
+ .x-animation {
+     animation: x-appear 0.5s forwards;
+ }
+
+ .o-animation {
+     animation: o-appear 0.5s forwards;
+ }
+
+ @keyframes x-appear {
+     0% {
+         opacity: 0;
+         transform: scale(0.5);
+     }
+
+     50% {
+         opacity: 1;
+         transform: scale(1.2);
+     }
+
+     100% {
+         transform: scale(1);
+     }
+ }
+
+ @keyframes o-appear {
+     0% {
+         opacity: 0;
+         transform: scale(0.5);
+     }
+
+     50% {
+         opacity: 1;
+         transform: scale(1.2);
+     }
+
+     100% {
+         transform: scale(1);
+     }
+ }
+
+ .fade-out {
+     animation: fade-out 0.5s forwards;
+ }
+
+ @keyframes fade-out {
+     0% {
+         opacity: 1;
+     }
+
+     100% {
+         opacity: 0;
+     }
+ }
+
+ .fade-in {
+     animation: fade-in 0.5s forwards;
+ }
+
+ @keyframes fade-in {
+     0% {
+         opacity: 0;
+     }
+
+     100% {
+         opacity: 1;
+     }
+ }
+
+ .slide-in {
+     animation: slide-in 0.5s forwards;
+ }
+
+ @keyframes slide-in {
+     0% {
+         transform: translateY(20px);
+         opacity: 0;
+     }
+
+     100% {
+         transform: translateY(0);
+         opacity: 1;
+     }
+ }
+
+ .pulse {
+     animation: pulse 2s infinite;
+ }
+
+ @keyframes pulse {
+     0% {
+         transform: scale(1);
+     }
+
+     50% {
+         transform: scale(1.05);
+     }
+
+     100% {
+         transform: scale(1);
+     }
+ }
+
+ .screen {
+     position: absolute;
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 100%;
+     opacity: 0;
+     pointer-events: none;
+     transition: opacity 0.5s ease;
+ }
+
+ .screen.active {
+     opacity: 1;
+     pointer-events: all;
+     z-index: 10;
+ }
+
+ .particles {
+     position: fixed;
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 100%;
+     z-index: -1;
+     overflow: hidden;
+ }
+
+ .particle {
+     position: absolute;
+     width: 2px;
+     height: 2px;
+     background-color: white;
+     border-radius: 50%;
+     opacity: 0.5;
+ }
+
+ .move-indicator {
+     width: 10px;
+     height: 10px;
+     border-radius: 50%;
+     margin: 0 3px;
+     transition: all 0.3s ease;
+ }
+
+ .move-indicator.x-active {
+     background-color: var(--neon-blue);
+     box-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue);
+ }
+
+ .move-indicator.o-active {
+     background-color: var(--neon-pink);
+     box-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink);
+ }
+
+ .move-indicator.inactive {
+     background-color: rgba(255, 255, 255, 0.2);
+ }
+
+ .difficulty-selector {
+     position: relative;
+     width: 100%;
+     height: 40px;
+     background: rgba(255, 255, 255, 0.1);
+     border-radius: 20px;
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+     padding: 0 5px;
+ }
+
+ .difficulty-option {
+     flex: 1;
+     text-align: center;
+     padding: 5px 0;
+     border-radius: 15px;
+     cursor: pointer;
+     font-size: 0.9rem;
+     z-index: 1;
+     font-weight: 600;
+ }
+
+ .difficulty-slider {
+     position: absolute;
+     height: 30px;
+     width: 33.33%;
+     background: var(--neon-purple);
+     border-radius: 15px;
+     transition: all 0.3s ease;
+     box-shadow: 0 0 5px var(--neon-purple), 0 0 10px var(--neon-purple);
+ }
+
+ .win-line {
+     position: absolute;
+     background: var(--neon-green);
+     height: 10px;
+     border-radius: 5px;
+     transform-origin: left center;
+     animation: line-grow 0.5s forwards;
+     box-shadow: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green);
+ }
+
+ @keyframes line-grow {
+     0% {
+         transform: scaleX(0);
+     }
+
+     100% {
+         transform: scaleX(1);
+     }
+ }
+
+ .grid-lines {
+     position: absolute;
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 100%;
+     pointer-events: none;
+ }
+
+ .grid-line {
+     position: absolute;
+     background: rgba(255, 255, 255, 0.2);
+     transition: all 0.3s ease;
+ }
+
+ .grid-line.horizontal {
+     width: 100%;
+     height: 2px;
+     transform: scaleX(0);
+ }
+
+ .grid-line.vertical {
+     height: 100%;
+     width: 2px;
+     transform: scaleY(0);
+ }
+
+ .grid-line.active {
+     transform: scale(1);
+ }
+
+ .grid-line.horizontal:nth-child(1) {
+     top: 33.33%;
+ }
+
+ .grid-line.horizontal:nth-child(2) {
+     top: 66.66%;
+ }
+
+ .grid-line.vertical:nth-child(3) {
+     left: 33.33%;
+ }
+
+ .grid-line.vertical:nth-child(4) {
+     left: 66.66%;
+ }
+
+ .opponent-card {
+     position: relative;
+     cursor: pointer;
+     transition: all 0.3s ease;
+     overflow: hidden;
+ }
+
+ .opponent-card::before {
+     content: '';
+     position: absolute;
+     top: 0;
+     left: 0;
+     width: 100%;
+     height: 100%;
+     background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+     z-index: 1;
+     opacity: 0;
+     transition: opacity 0.3s ease;
+ }
+
+ .opponent-card:hover::before {
+     opacity: 1;
+ }
+
+ .opponent-card:hover {
+     transform: translateY(-5px);
+ }
+
+ .opponent-card.selected {
+     transform: translateY(-5px);
+ }
+
+ .opponent-card.friend.selected {
+     box-shadow: 0 0 15px var(--neon-blue), 0 0 30px rgba(0, 243, 255, 0.3);
+ }
+
+ .opponent-card.computer.selected {
+     box-shadow: 0 0 15px var(--neon-pink), 0 0 30px rgba(255, 0, 229, 0.3);
+ }
