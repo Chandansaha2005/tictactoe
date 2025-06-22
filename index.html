@@ -1,29 +1,2214 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tic-Tac-Toe</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&amp;display=swap"
+    rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root {
+      --primary-bg: #0a0a1a;
+      --secondary-bg: #12122a;
+      --neon-blue: #00f3ff;
+      --neon-pink: #ff00e5;
+      --neon-purple: #9d00ff;
+      --neon-green: #00ff8e;
+      --glass-bg: rgba(20, 20, 40, 0.6);
+      --glass-border: rgba(255, 255, 255, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+    }
+
+    body {
+      background-color: var(--primary-bg);
+      color: white;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    .neon-text-blue {
+      color: var(--neon-blue);
+      text-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue);
+    }
+
+    .neon-text-pink {
+      color: var(--neon-pink);
+      text-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink), 0 0 20px var(--neon-pink);
+    }
+
+    .neon-text-purple {
+      color: var(--neon-purple);
+      text-shadow: 0 0 5px var(--neon-purple), 0 0 10px var(--neon-purple), 0 0 20px var(--neon-purple);
+    }
+
+    .neon-border-blue {
+      border: 2px solid var(--neon-blue);
+      box-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue);
+    }
+
+    .neon-border-pink {
+      border: 2px solid var(--neon-pink);
+      box-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink);
+    }
+
+    .neon-border-purple {
+      border: 2px solid var(--neon-purple);
+      box-shadow: 0 0 5px var(--neon-purple), 0 0 10px var(--neon-purple);
+    }
+
+    .glass-panel {
+      background: var(--glass-bg);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+    }
+
+    .btn {
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      z-index: 1;
+      font-weight: 600;
+    }
+
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+      z-index: -1;
+    }
+
+    .btn:hover::before {
+      left: 0;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 7px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .mode-card {
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      overflow: hidden;
+      height: 140px;
+    }
+
+    .mode-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .mode-card:hover::before {
+      opacity: 1;
+    }
+
+    .mode-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .mode-card.selected {
+      transform: translateY(-5px);
+    }
+
+    .mode-card.classic.selected {
+      box-shadow: 0 0 15px var(--neon-blue), 0 0 30px rgba(0, 243, 255, 0.3);
+    }
+
+    .mode-card.twist.selected {
+      box-shadow: 0 0 15px var(--neon-purple), 0 0 30px rgba(157, 0, 255, 0.3);
+    }
+
+    .toggle-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.2);
+      transition: .4s;
+      border-radius: 34px;
+    }
+
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked+.toggle-slider {
+      background-color: var(--neon-purple);
+      box-shadow: 0 0 5px var(--neon-purple), 0 0 10px var(--neon-purple);
+    }
+
+    input:checked+.toggle-slider:before {
+      transform: translateX(26px);
+    }
+
+    .game-cell {
+      position: relative;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      font-weight: bold;
+    }
+
+    .game-cell:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .x-marker {
+      position: relative;
+      width: 60%;
+      height: 60%;
+    }
+
+    .x-marker::before,
+    .x-marker::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      height: 8px;
+      background: var(--neon-blue);
+      border-radius: 4px;
+      box-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue);
+    }
+
+    .x-marker::before {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+
+    .x-marker::after {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
+
+    .o-marker {
+      width: 60%;
+      height: 60%;
+      border: 8px solid var(--neon-pink);
+      border-radius: 50%;
+      box-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink), inset 0 0 5px var(--neon-pink);
+    }
+
+    .x-animation {
+      animation: x-appear 0.5s forwards;
+    }
+
+    .o-animation {
+      animation: o-appear 0.5s forwards;
+    }
+
+    @keyframes x-appear {
+      0% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.2);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    @keyframes o-appear {
+      0% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+
+      50% {
+        opacity: 1;
+        transform: scale(1.2);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .fade-out {
+      animation: fade-out 0.5s forwards;
+    }
+
+    @keyframes fade-out {
+      0% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 0;
+      }
+    }
+
+    .fade-in {
+      animation: fade-in 0.5s forwards;
+    }
+
+    @keyframes fade-in {
+      0% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    .slide-in {
+      animation: slide-in 0.5s forwards;
+    }
+
+    @keyframes slide-in {
+      0% {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.05);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    .screen.active {
+      opacity: 1;
+      pointer-events: all;
+      z-index: 10;
+    }
+
+    .particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background-color: white;
+      border-radius: 50%;
+      opacity: 0.5;
+    }
+
+    .move-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin: 0 3px;
+      transition: all 0.3s ease;
+    }
+
+    .move-indicator.x-active {
+      background-color: var(--neon-blue);
+      box-shadow: 0 0 5px var(--neon-blue), 0 0 10px var(--neon-blue);
+    }
+
+    .move-indicator.o-active {
+      background-color: var(--neon-pink);
+      box-shadow: 0 0 5px var(--neon-pink), 0 0 10px var(--neon-pink);
+    }
+
+    .move-indicator.inactive {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .difficulty-selector {
+      position: relative;
+      width: 100%;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5px;
+    }
+
+    .difficulty-option {
+      flex: 1;
+      text-align: center;
+      padding: 5px 0;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      z-index: 1;
+      font-weight: 600;
+    }
+
+    .difficulty-slider {
+      position: absolute;
+      height: 30px;
+      width: 33.33%;
+      background: var(--neon-purple);
+      border-radius: 15px;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 5px var(--neon-purple), 0 0 10px var(--neon-purple);
+    }
+
+    .win-line {
+      position: absolute;
+      background: var(--neon-green);
+      height: 10px;
+      border-radius: 5px;
+      transform-origin: left center;
+      animation: line-grow 0.5s forwards;
+      box-shadow: 0 0 5px var(--neon-green), 0 0 10px var(--neon-green);
+    }
+
+    @keyframes line-grow {
+      0% {
+        transform: scaleX(0);
+      }
+
+      100% {
+        transform: scaleX(1);
+      }
+    }
+
+    .grid-lines {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    .grid-line {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .grid-line.horizontal {
+      width: 100%;
+      height: 2px;
+      transform: scaleX(0);
+    }
+
+    .grid-line.vertical {
+      height: 100%;
+      width: 2px;
+      transform: scaleY(0);
+    }
+
+    .grid-line.active {
+      transform: scale(1);
+    }
+
+    .grid-line.horizontal:nth-child(1) {
+      top: 33.33%;
+    }
+
+    .grid-line.horizontal:nth-child(2) {
+      top: 66.66%;
+    }
+
+    .grid-line.vertical:nth-child(3) {
+      left: 33.33%;
+    }
+
+    .grid-line.vertical:nth-child(4) {
+      left: 66.66%;
+    }
+
+    .opponent-card {
+      position: relative;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+
+    .opponent-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .opponent-card:hover::before {
+      opacity: 1;
+    }
+
+    .opponent-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .opponent-card.selected {
+      transform: translateY(-5px);
+    }
+
+    .opponent-card.friend.selected {
+      box-shadow: 0 0 15px var(--neon-blue), 0 0 30px rgba(0, 243, 255, 0.3);
+    }
+
+    .opponent-card.computer.selected {
+      box-shadow: 0 0 15px var(--neon-pink), 0 0 30px rgba(255, 0, 229, 0.3);
+    }
+  </style>
+  <style>
+    *,
+    ::before,
+    ::after {
+      --tw-border-spacing-x: 0;
+      --tw-border-spacing-y: 0;
+      --tw-translate-x: 0;
+      --tw-translate-y: 0;
+      --tw-rotate: 0;
+      --tw-skew-x: 0;
+      --tw-skew-y: 0;
+      --tw-scale-x: 1;
+      --tw-scale-y: 1;
+      --tw-pan-x: ;
+      --tw-pan-y: ;
+      --tw-pinch-zoom: ;
+      --tw-scroll-snap-strictness: proximity;
+      --tw-gradient-from-position: ;
+      --tw-gradient-via-position: ;
+      --tw-gradient-to-position: ;
+      --tw-ordinal: ;
+      --tw-slashed-zero: ;
+      --tw-numeric-figure: ;
+      --tw-numeric-spacing: ;
+      --tw-numeric-fraction: ;
+      --tw-ring-inset: ;
+      --tw-ring-offset-width: 0px;
+      --tw-ring-offset-color: #fff;
+      --tw-ring-color: rgb(59 130 246 / 0.5);
+      --tw-ring-offset-shadow: 0 0 #0000;
+      --tw-ring-shadow: 0 0 #0000;
+      --tw-shadow: 0 0 #0000;
+      --tw-shadow-colored: 0 0 #0000;
+      --tw-blur: ;
+      --tw-brightness: ;
+      --tw-contrast: ;
+      --tw-grayscale: ;
+      --tw-hue-rotate: ;
+      --tw-invert: ;
+      --tw-saturate: ;
+      --tw-sepia: ;
+      --tw-drop-shadow: ;
+      --tw-backdrop-blur: ;
+      --tw-backdrop-brightness: ;
+      --tw-backdrop-contrast: ;
+      --tw-backdrop-grayscale: ;
+      --tw-backdrop-hue-rotate: ;
+      --tw-backdrop-invert: ;
+      --tw-backdrop-opacity: ;
+      --tw-backdrop-saturate: ;
+      --tw-backdrop-sepia: ;
+      --tw-contain-size: ;
+      --tw-contain-layout: ;
+      --tw-contain-paint: ;
+      --tw-contain-style:
+    }
+
+    ::backdrop {
+      --tw-border-spacing-x: 0;
+      --tw-border-spacing-y: 0;
+      --tw-translate-x: 0;
+      --tw-translate-y: 0;
+      --tw-rotate: 0;
+      --tw-skew-x: 0;
+      --tw-skew-y: 0;
+      --tw-scale-x: 1;
+      --tw-scale-y: 1;
+      --tw-pan-x: ;
+      --tw-pan-y: ;
+      --tw-pinch-zoom: ;
+      --tw-scroll-snap-strictness: proximity;
+      --tw-gradient-from-position: ;
+      --tw-gradient-via-position: ;
+      --tw-gradient-to-position: ;
+      --tw-ordinal: ;
+      --tw-slashed-zero: ;
+      --tw-numeric-figure: ;
+      --tw-numeric-spacing: ;
+      --tw-numeric-fraction: ;
+      --tw-ring-inset: ;
+      --tw-ring-offset-width: 0px;
+      --tw-ring-offset-color: #fff;
+      --tw-ring-color: rgb(59 130 246 / 0.5);
+      --tw-ring-offset-shadow: 0 0 #0000;
+      --tw-ring-shadow: 0 0 #0000;
+      --tw-shadow: 0 0 #0000;
+      --tw-shadow-colored: 0 0 #0000;
+      --tw-blur: ;
+      --tw-brightness: ;
+      --tw-contrast: ;
+      --tw-grayscale: ;
+      --tw-hue-rotate: ;
+      --tw-invert: ;
+      --tw-saturate: ;
+      --tw-sepia: ;
+      --tw-drop-shadow: ;
+      --tw-backdrop-blur: ;
+      --tw-backdrop-brightness: ;
+      --tw-backdrop-contrast: ;
+      --tw-backdrop-grayscale: ;
+      --tw-backdrop-hue-rotate: ;
+      --tw-backdrop-invert: ;
+      --tw-backdrop-opacity: ;
+      --tw-backdrop-saturate: ;
+      --tw-backdrop-sepia: ;
+      --tw-contain-size: ;
+      --tw-contain-layout: ;
+      --tw-contain-paint: ;
+      --tw-contain-style:
+    }
+
+    /* ! tailwindcss v3.4.16 | MIT License | https://tailwindcss.com */
+    *,
+    ::after,
+    ::before {
+      box-sizing: border-box;
+      border-width: 0;
+      border-style: solid;
+      border-color: #e5e7eb
+    }
+
+    ::after,
+    ::before {
+      --tw-content: ''
+    }
+
+    :host,
+    html {
+      line-height: 1.5;
+      -webkit-text-size-adjust: 100%;
+      -moz-tab-size: 4;
+      tab-size: 4;
+      font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+      font-feature-settings: normal;
+      font-variation-settings: normal;
+      -webkit-tap-highlight-color: transparent
+    }
+
+    body {
+      margin: 0;
+      line-height: inherit
+    }
+
+    hr {
+      height: 0;
+      color: inherit;
+      border-top-width: 1px
+    }
+
+    abbr:where([title]) {
+      -webkit-text-decoration: underline dotted;
+      text-decoration: underline dotted
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      font-size: inherit;
+      font-weight: inherit
+    }
+
+    a {
+      color: inherit;
+      text-decoration: inherit
+    }
+
+    b,
+    strong {
+      font-weight: bolder
+    }
+
+    code,
+    kbd,
+    pre,
+    samp {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-feature-settings: normal;
+      font-variation-settings: normal;
+      font-size: 1em
+    }
+
+    small {
+      font-size: 80%
+    }
+
+    sub,
+    sup {
+      font-size: 75%;
+      line-height: 0;
+      position: relative;
+      vertical-align: baseline
+    }
+
+    sub {
+      bottom: -.25em
+    }
+
+    sup {
+      top: -.5em
+    }
+
+    table {
+      text-indent: 0;
+      border-color: inherit;
+      border-collapse: collapse
+    }
+
+    button,
+    input,
+    optgroup,
+    select,
+    textarea {
+      font-family: inherit;
+      font-feature-settings: inherit;
+      font-variation-settings: inherit;
+      font-size: 100%;
+      font-weight: inherit;
+      line-height: inherit;
+      letter-spacing: inherit;
+      color: inherit;
+      margin: 0;
+      padding: 0
+    }
+
+    button,
+    select {
+      text-transform: none
+    }
+
+    button,
+    input:where([type=button]),
+    input:where([type=reset]),
+    input:where([type=submit]) {
+      -webkit-appearance: button;
+      background-color: transparent;
+      background-image: none
+    }
+
+    :-moz-focusring {
+      outline: auto
+    }
+
+    :-moz-ui-invalid {
+      box-shadow: none
+    }
+
+    progress {
+      vertical-align: baseline
+    }
+
+    ::-webkit-inner-spin-button,
+    ::-webkit-outer-spin-button {
+      height: auto
+    }
+
+    [type=search] {
+      -webkit-appearance: textfield;
+      outline-offset: -2px
+    }
+
+    ::-webkit-search-decoration {
+      -webkit-appearance: none
+    }
+
+    ::-webkit-file-upload-button {
+      -webkit-appearance: button;
+      font: inherit
+    }
+
+    summary {
+      display: list-item
+    }
+
+    blockquote,
+    dd,
+    dl,
+    figure,
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    hr,
+    p,
+    pre {
+      margin: 0
+    }
+
+    fieldset {
+      margin: 0;
+      padding: 0
+    }
+
+    legend {
+      padding: 0
+    }
+
+    menu,
+    ol,
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0
+    }
+
+    dialog {
+      padding: 0
+    }
+
+    textarea {
+      resize: vertical
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      opacity: 1;
+      color: #9ca3af
+    }
+
+    [role=button],
+    button {
+      cursor: pointer
+    }
+
+    :disabled {
+      cursor: default
+    }
+
+    audio,
+    canvas,
+    embed,
+    iframe,
+    img,
+    object,
+    svg,
+    video {
+      display: block;
+      vertical-align: middle
+    }
+
+    img,
+    video {
+      max-width: 100%;
+      height: auto
+    }
+
+    [hidden]:where(:not([hidden=until-found])) {
+      display: none
+    }
+
+    .relative {
+      position: relative
+    }
+
+    .my-6 {
+      margin-top: 1.5rem;
+      margin-bottom: 1.5rem
+    }
+
+    .mb-2 {
+      margin-bottom: 0.5rem
+    }
+
+    .mb-3 {
+      margin-bottom: 0.75rem
+    }
+
+    .mb-4 {
+      margin-bottom: 1rem
+    }
+
+    .mb-6 {
+      margin-bottom: 1.5rem
+    }
+
+    .mb-8 {
+      margin-bottom: 2rem
+    }
+
+    .mt-1 {
+      margin-top: 0.25rem
+    }
+
+    .mt-2 {
+      margin-top: 0.5rem
+    }
+
+    .mt-4 {
+      margin-top: 1rem
+    }
+
+    .flex {
+      display: flex
+    }
+
+    .grid {
+      display: grid
+    }
+
+    .hidden {
+      display: none
+    }
+
+    .aspect-square {
+      aspect-ratio: 1 / 1
+    }
+
+    .h-10 {
+      height: 2.5rem
+    }
+
+    .h-6 {
+      height: 1.5rem
+    }
+
+    .h-full {
+      height: 100%
+    }
+
+    .min-h-screen {
+      min-height: 100vh
+    }
+
+    .w-10 {
+      width: 2.5rem
+    }
+
+    .w-6 {
+      width: 1.5rem
+    }
+
+    .w-full {
+      width: 100%
+    }
+
+    .max-w-md {
+      max-width: 28rem
+    }
+
+    .max-w-sm {
+      max-width: 24rem
+    }
+
+    .flex-1 {
+      flex: 1 1 0%
+    }
+
+    .grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr))
+    }
+
+    .grid-cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr))
+    }
+
+    .flex-col {
+      flex-direction: column
+    }
+
+    .items-center {
+      align-items: center
+    }
+
+    .justify-center {
+      justify-content: center
+    }
+
+    .justify-between {
+      justify-content: space-between
+    }
+
+    .gap-3 {
+      gap: 0.75rem
+    }
+
+    .gap-4 {
+      gap: 1rem
+    }
+
+    .space-x-4> :not([hidden])~ :not([hidden]) {
+      --tw-space-x-reverse: 0;
+      margin-right: calc(1rem * var(--tw-space-x-reverse));
+      margin-left: calc(1rem * calc(1 - var(--tw-space-x-reverse)))
+    }
+
+    .space-y-6> :not([hidden])~ :not([hidden]) {
+      --tw-space-y-reverse: 0;
+      margin-top: calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));
+      margin-bottom: calc(1.5rem * var(--tw-space-y-reverse))
+    }
+
+    .space-y-8> :not([hidden])~ :not([hidden]) {
+      --tw-space-y-reverse: 0;
+      margin-top: calc(2rem * calc(1 - var(--tw-space-y-reverse)));
+      margin-bottom: calc(2rem * var(--tw-space-y-reverse))
+    }
+
+    .rounded-lg {
+      border-radius: 0.5rem
+    }
+
+    .border-t {
+      border-top-width: 1px
+    }
+
+    .border-white\/20 {
+      border-color: rgb(255 255 255 / 0.2)
+    }
+
+    .bg-white\/10 {
+      background-color: rgb(255 255 255 / 0.1)
+    }
+
+    .p-2 {
+      padding: 0.5rem
+    }
+
+    .p-4 {
+      padding: 1rem
+    }
+
+    .p-5 {
+      padding: 1.25rem
+    }
+
+    .p-6 {
+      padding: 1.5rem
+    }
+
+    .p-8 {
+      padding: 2rem
+    }
+
+    .py-3 {
+      padding-top: 0.75rem;
+      padding-bottom: 0.75rem
+    }
+
+    .py-4 {
+      padding-top: 1rem;
+      padding-bottom: 1rem
+    }
+
+    .pt-4 {
+      padding-top: 1rem
+    }
+
+    .text-center {
+      text-align: center
+    }
+
+    .text-2xl {
+      font-size: 1.5rem;
+      line-height: 2rem
+    }
+
+    .text-3xl {
+      font-size: 1.875rem;
+      line-height: 2.25rem
+    }
+
+    .text-5xl {
+      font-size: 3rem;
+      line-height: 1
+    }
+
+    .text-6xl {
+      font-size: 3.75rem;
+      line-height: 1
+    }
+
+    .text-lg {
+      font-size: 1.125rem;
+      line-height: 1.75rem
+    }
+
+    .text-xl {
+      font-size: 1.25rem;
+      line-height: 1.75rem
+    }
+
+    .text-xs {
+      font-size: 0.75rem;
+      line-height: 1rem
+    }
+
+    .font-bold {
+      font-weight: 700
+    }
+
+    .text-white\/50 {
+      color: rgb(255 255 255 / 0.5)
+    }
+
+    .text-white\/70 {
+      color: rgb(255 255 255 / 0.7)
+    }
+  </style>
 </head>
+
 <body>
-    <div class="container">
-        <h1>Tic-Tac-Toe</h1>
-        <div id="game-board">
-            <!-- 3x3 Board -->
-            <div class="cell" data-index="0"></div>
-            <div class="cell" data-index="1"></div>
-            <div class="cell" data-index="2"></div>
-            <div class="cell" data-index="3"></div>
-            <div class="cell" data-index="4"></div>
-            <div class="cell" data-index="5"></div>
-            <div class="cell" data-index="6"></div>
-            <div class="cell" data-index="7"></div>
-            <div class="cell" data-index="8"></div>
-        </div>
-        <p id="message"></p>
-        <button id="restart">Restart Game</button>
+  <!-- Particle Background -->
+  <div class="particles" id="particles">
+    <div class="particle"
+      style="left: 753.748px; top: 533.561px; width: 3.56118px; height: 3.56118px; background-color: var(--neon-pink); box-shadow: 0 0 7.122363925262838px var(--neon-pink); opacity: 0.559606;">
     </div>
-    <script src="script.js"></script>
+    <div class="particle"
+      style="left: 968.12px; top: 227.993px; width: 3.51357px; height: 3.51357px; background-color: var(--neon-pink); box-shadow: 0 0 7.0271357073464px var(--neon-pink); opacity: 0.210805;">
+    </div>
+    <div class="particle"
+      style="left: 458.324px; top: 96.9136px; width: 2.98156px; height: 2.98156px; background-color: var(--neon-purple); box-shadow: 0 0 5.9631218359208376px var(--neon-purple); opacity: 0.592586;">
+    </div>
+    <div class="particle"
+      style="left: 566.42px; top: 759.004px; width: 2.67683px; height: 2.67683px; background-color: var(--neon-purple); box-shadow: 0 0 5.353661174999077px var(--neon-purple); opacity: 0.165736;">
+    </div>
+    <div class="particle"
+      style="left: 306.467px; top: 506.564px; width: 3.55687px; height: 3.55687px; background-color: var(--neon-blue); box-shadow: 0 0 7.113747405405775px var(--neon-blue); opacity: 0.518144;">
+    </div>
+    <div class="particle"
+      style="left: 45.2275px; top: 19.9546px; width: 1.39485px; height: 1.39485px; background-color: var(--neon-purple); box-shadow: 0 0 2.7897032584980703px var(--neon-purple); opacity: 0.234844;">
+    </div>
+    <div class="particle"
+      style="left: 830.888px; top: 104.317px; width: 3.02962px; height: 3.02962px; background-color: var(--neon-purple); box-shadow: 0 0 6.05923946589501px var(--neon-purple); opacity: 0.285069;">
+    </div>
+    <div class="particle"
+      style="left: 517.481px; top: 582.17px; width: 2.48962px; height: 2.48962px; background-color: var(--neon-blue); box-shadow: 0 0 4.979245101625114px var(--neon-blue); opacity: 0.35471;">
+    </div>
+    <div class="particle"
+      style="left: 521.165px; top: 898.299px; width: 3.8292px; height: 3.8292px; background-color: var(--neon-pink); box-shadow: 0 0 7.658394876864702px var(--neon-pink); opacity: 0.250809;">
+    </div>
+    <div class="particle"
+      style="left: 89.1385px; top: 912.683px; width: 2.19571px; height: 2.19571px; background-color: var(--neon-pink); box-shadow: 0 0 4.391413610715746px var(--neon-pink); opacity: 0.313872;">
+    </div>
+    <div class="particle"
+      style="left: 304.054px; top: 633.344px; width: 3.76744px; height: 3.76744px; background-color: var(--neon-pink); box-shadow: 0 0 7.534878130297316px var(--neon-pink); opacity: 0.347154;">
+    </div>
+    <div class="particle"
+      style="left: 469.712px; top: 793.495px; width: 2.46715px; height: 2.46715px; background-color: var(--neon-pink); box-shadow: 0 0 4.934297162965501px var(--neon-pink); opacity: 0.481086;">
+    </div>
+    <div class="particle"
+      style="left: 629.843px; top: 220.826px; width: 3.07915px; height: 3.07915px; background-color: var(--neon-pink); box-shadow: 0 0 6.158296625283803px var(--neon-pink); opacity: 0.265218;">
+    </div>
+    <div class="particle"
+      style="left: 127.495px; top: 10.3088px; width: 1.77603px; height: 1.77603px; background-color: var(--neon-blue); box-shadow: 0 0 3.5520501275051903px var(--neon-blue); opacity: 0.54583;">
+    </div>
+    <div class="particle"
+      style="left: 310.285px; top: 31.7182px; width: 1.84688px; height: 1.84688px; background-color: var(--neon-blue); box-shadow: 0 0 3.6937549117760584px var(--neon-blue); opacity: 0.543043;">
+    </div>
+    <div class="particle"
+      style="left: 33.3279px; top: 366.007px; width: 2.41514px; height: 2.41514px; background-color: var(--neon-purple); box-shadow: 0 0 4.8302834770022125px var(--neon-purple); opacity: 0.596931;">
+    </div>
+    <div class="particle"
+      style="left: 517.338px; top: 886.321px; width: 2.8035px; height: 2.8035px; background-color: var(--neon-purple); box-shadow: 0 0 5.6069960784029735px var(--neon-purple); opacity: 0.303533;">
+    </div>
+    <div class="particle"
+      style="left: 642.569px; top: 442.285px; width: 1.08553px; height: 1.08553px; background-color: var(--neon-blue); box-shadow: 0 0 2.171068408635067px var(--neon-blue); opacity: 0.354657;">
+    </div>
+    <div class="particle"
+      style="left: 411.306px; top: 175.599px; width: 3.35003px; height: 3.35003px; background-color: var(--neon-purple); box-shadow: 0 0 6.700054652965539px var(--neon-purple); opacity: 0.529209;">
+    </div>
+    <div class="particle"
+      style="left: 363.757px; top: 246.613px; width: 3.75972px; height: 3.75972px; background-color: var(--neon-purple); box-shadow: 0 0 7.519445343363046px var(--neon-purple); opacity: 0.540311;">
+    </div>
+    <div class="particle"
+      style="left: 634.865px; top: 714.179px; width: 2.71504px; height: 2.71504px; background-color: var(--neon-pink); box-shadow: 0 0 5.430081724195269px var(--neon-pink); opacity: 0.564035;">
+    </div>
+    <div class="particle"
+      style="left: 162.483px; top: 484.85px; width: 2.60403px; height: 2.60403px; background-color: var(--neon-purple); box-shadow: 0 0 5.208063010438364px var(--neon-purple); opacity: 0.338637;">
+    </div>
+    <div class="particle"
+      style="left: 251.937px; top: 519.408px; width: 2.51137px; height: 2.51137px; background-color: var(--neon-blue); box-shadow: 0 0 5.022745296876983px var(--neon-blue); opacity: 0.549175;">
+    </div>
+    <div class="particle"
+      style="left: 414.628px; top: 90.1273px; width: 2.12436px; height: 2.12436px; background-color: var(--neon-purple); box-shadow: 0 0 4.2487183118197995px var(--neon-purple); opacity: 0.489509;">
+    </div>
+    <div class="particle"
+      style="left: 379.276px; top: 493.483px; width: 2.58672px; height: 2.58672px; background-color: var(--neon-purple); box-shadow: 0 0 5.173446161479194px var(--neon-purple); opacity: 0.127586;">
+    </div>
+    <div class="particle"
+      style="left: 832.009px; top: 53.2813px; width: 3.71128px; height: 3.71128px; background-color: var(--neon-purple); box-shadow: 0 0 7.422569226793918px var(--neon-purple); opacity: 0.223838;">
+    </div>
+    <div class="particle"
+      style="left: 291.729px; top: 174.329px; width: 1.4982px; height: 1.4982px; background-color: var(--neon-blue); box-shadow: 0 0 2.996395033680144px var(--neon-blue); opacity: 0.375523;">
+    </div>
+    <div class="particle"
+      style="left: 721.168px; top: 303.165px; width: 2.83544px; height: 2.83544px; background-color: var(--neon-purple); box-shadow: 0 0 5.670872221758756px var(--neon-purple); opacity: 0.340075;">
+    </div>
+    <div class="particle"
+      style="left: 923.75px; top: 471.964px; width: 1.58789px; height: 1.58789px; background-color: var(--neon-purple); box-shadow: 0 0 3.1757884836865036px var(--neon-purple); opacity: 0.213367;">
+    </div>
+    <div class="particle"
+      style="left: 96.4552px; top: 108.967px; width: 3.29606px; height: 3.29606px; background-color: var(--neon-pink); box-shadow: 0 0 6.592119066395216px var(--neon-pink); opacity: 0.374303;">
+    </div>
+    <div class="particle"
+      style="left: 1007.22px; top: 564.981px; width: 2.52303px; height: 2.52303px; background-color: var(--neon-purple); box-shadow: 0 0 5.046053016249494px var(--neon-purple); opacity: 0.373041;">
+    </div>
+    <div class="particle"
+      style="left: 183.135px; top: 331.459px; width: 3.64226px; height: 3.64226px; background-color: var(--neon-blue); box-shadow: 0 0 7.284519398048534px var(--neon-blue); opacity: 0.481368;">
+    </div>
+    <div class="particle"
+      style="left: 156.558px; top: 633.033px; width: 2.45325px; height: 2.45325px; background-color: var(--neon-blue); box-shadow: 0 0 4.906493145094832px var(--neon-blue); opacity: 0.295701;">
+    </div>
+    <div class="particle"
+      style="left: 1152.94px; top: 743.139px; width: 1.61294px; height: 1.61294px; background-color: var(--neon-purple); box-shadow: 0 0 3.2258725595312603px var(--neon-purple); opacity: 0.356182;">
+    </div>
+    <div class="particle"
+      style="left: 715.987px; top: 104.533px; width: 2.94986px; height: 2.94986px; background-color: var(--neon-blue); box-shadow: 0 0 5.899713887170401px var(--neon-blue); opacity: 0.25892;">
+    </div>
+    <div class="particle"
+      style="left: 1002.49px; top: 96.8959px; width: 1.185px; height: 1.185px; background-color: var(--neon-purple); box-shadow: 0 0 2.369999479857999px var(--neon-purple); opacity: 0.466287;">
+    </div>
+    <div class="particle"
+      style="left: 830.273px; top: 92.0489px; width: 3.17842px; height: 3.17842px; background-color: var(--neon-pink); box-shadow: 0 0 6.356850183995558px var(--neon-pink); opacity: 0.450876;">
+    </div>
+    <div class="particle"
+      style="left: 127.577px; top: 522.12px; width: 1.34724px; height: 1.34724px; background-color: var(--neon-pink); box-shadow: 0 0 2.69447722366946px var(--neon-pink); opacity: 0.359673;">
+    </div>
+    <div class="particle"
+      style="left: 675.714px; top: 512.379px; width: 3.02805px; height: 3.02805px; background-color: var(--neon-pink); box-shadow: 0 0 6.0561070498330745px var(--neon-pink); opacity: 0.328851;">
+    </div>
+    <div class="particle"
+      style="left: 907.136px; top: 601.353px; width: 1.77865px; height: 1.77865px; background-color: var(--neon-blue); box-shadow: 0 0 3.557292953748885px var(--neon-blue); opacity: 0.381603;">
+    </div>
+    <div class="particle"
+      style="left: 1013.84px; top: 56.2454px; width: 2.37765px; height: 2.37765px; background-color: var(--neon-purple); box-shadow: 0 0 4.755299325784939px var(--neon-purple); opacity: 0.595467;">
+    </div>
+    <div class="particle"
+      style="left: 118.179px; top: 355.591px; width: 3.82099px; height: 3.82099px; background-color: var(--neon-pink); box-shadow: 0 0 7.641978409893481px var(--neon-pink); opacity: 0.418582;">
+    </div>
+    <div class="particle"
+      style="left: 670.084px; top: 788.518px; width: 3.42603px; height: 3.42603px; background-color: var(--neon-pink); box-shadow: 0 0 6.852051453678611px var(--neon-pink); opacity: 0.449178;">
+    </div>
+    <div class="particle"
+      style="left: 993.699px; top: 231.938px; width: 2.44287px; height: 2.44287px; background-color: var(--neon-blue); box-shadow: 0 0 4.885743291576686px var(--neon-blue); opacity: 0.273416;">
+    </div>
+    <div class="particle"
+      style="left: 553.732px; top: 812.625px; width: 3.44408px; height: 3.44408px; background-color: var(--neon-purple); box-shadow: 0 0 6.888161772327373px var(--neon-purple); opacity: 0.140222;">
+    </div>
+    <div class="particle"
+      style="left: 555.751px; top: 902.015px; width: 2.6608px; height: 2.6608px; background-color: var(--neon-purple); box-shadow: 0 0 5.321604055036509px var(--neon-purple); opacity: 0.55299;">
+    </div>
+    <div class="particle"
+      style="left: 463.422px; top: 160.263px; width: 3.2807px; height: 3.2807px; background-color: var(--neon-purple); box-shadow: 0 0 6.5614036593960385px var(--neon-purple); opacity: 0.241247;">
+    </div>
+    <div class="particle"
+      style="left: 75.9009px; top: 24.3683px; width: 1.16491px; height: 1.16491px; background-color: var(--neon-purple); box-shadow: 0 0 2.329827329278407px var(--neon-purple); opacity: 0.351684;">
+    </div>
+    <div class="particle"
+      style="left: 1201.12px; top: 438.8px; width: 2.98465px; height: 2.98465px; background-color: var(--neon-purple); box-shadow: 0 0 5.969308255930101px var(--neon-purple); opacity: 0.441044;">
+    </div>
+    <div class="particle"
+      style="left: 7.77905px; top: 885.728px; width: 1.95173px; height: 1.95173px; background-color: var(--neon-purple); box-shadow: 0 0 3.9034504692070895px var(--neon-purple); opacity: 0.23882;">
+    </div>
+  </div>
+
+  <!-- Main Container -->
+  <div class="min-h-screen flex items-center justify-center p-5">
+    <div class="w-full max-w-md">
+      <!-- Welcome Screen -->
+      <div id="welcome-screen" class="screen active">
+        <div class="flex flex-col items-center justify-center space-y-8">
+          <h1 class="text-5xl font-bold neon-text-blue mb-4">TIC TAC TOE</h1>
+          <div class="glass-panel p-6 w-full space-y-6">
+            <div class="mb-6">
+              <h2 class="text-xl font-bold mb-4 text-center">Select Game Mode</h2>
+              <div class="grid grid-cols-2 gap-4">
+                <div id="classic-mode"
+                  class="mode-card classic glass-panel p-4 flex flex-col items-center justify-center selected">
+                  <div class="text-3xl mb-2 neon-text-blue">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z">
+                      </path>
+                    </svg>
+                  </div>
+                  <h3 class="font-bold">Classic</h3>
+                  <p class="text-xs text-center mt-1 text-white/70">Standard rules</p>
+                </div>
+                <div id="twist-mode" class="mode-card twist glass-panel p-4 flex flex-col items-center justify-center">
+                  <div class="text-3xl mb-2 neon-text-purple">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M14.121 14.121L19 19m-7-7l7-7m-7 7l-2.879 2.879M12 12L9.121 9.121m0 5.758a3 3 0 10-4.243 4.243 3 3 0 004.243-4.243zm0-5.758a3 3 0 10-4.243-4.243 3 3 0 004.243 4.243z">
+                      </path>
+                    </svg>
+                  </div>
+                  <h3 class="font-bold">Twist</h3>
+                  <p class="text-xs text-center mt-1 text-white/70">Only 3 marks per player</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-6">
+              <h2 class="text-xl font-bold mb-4 text-center">Select Opponent</h2>
+              <div class="grid grid-cols-2 gap-4">
+                <div id="friend-opponent"
+                  class="opponent-card friend glass-panel p-4 flex flex-col items-center justify-center selected">
+                  <div class="text-3xl mb-2 neon-text-blue">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+                      </path>
+                    </svg>
+                  </div>
+                  <h3 class="font-bold">Friend</h3>
+                  <p class="text-xs text-center mt-1 text-white/70">Local multiplayer</p>
+                </div>
+                <div id="computer-opponent"
+                  class="opponent-card computer glass-panel p-4 flex flex-col items-center justify-center">
+                  <div class="text-3xl mb-2 neon-text-pink">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                      </path>
+                    </svg>
+                  </div>
+                  <h3 class="font-bold">Computer</h3>
+                  <p class="text-xs text-center mt-1 text-white/70">Play against AI</p>
+                </div>
+              </div>
+            </div>
+
+            <div id="ai-difficulty-container" class="hidden pt-4 border-t border-white/20">
+              <p class="text-center mb-3 font-bold">AI Difficulty</p>
+              <div class="difficulty-selector">
+                <div class="difficulty-option" data-difficulty="easy">Easy</div>
+                <div class="difficulty-option" data-difficulty="medium">Medium</div>
+                <div class="difficulty-option" data-difficulty="impossible">Impossible</div>
+                <div class="difficulty-slider" style="left: 33.33%;"></div>
+              </div>
+            </div>
+
+            <button id="start-game" class="btn py-4 w-full rounded-lg neon-border-purple neon-text-purple mt-4">
+              Start Game
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Game Screen -->
+      <div id="game-screen" class="screen">
+        <div class="flex flex-col h-full">
+          <div class="flex justify-between items-center mb-6">
+            <button id="back-button" class="btn p-2 rounded-lg neon-border-blue">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18">
+                </path>
+              </svg>
+            </button>
+
+            <div id="game-mode-display" class="font-bold text-lg neon-text-purple">Classic Mode</div>
+
+            <button id="reset-button" class="btn p-2 rounded-lg neon-border-pink">
+              <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15">
+                </path>
+              </svg>
+            </button>
+          </div>
+
+          <div class="glass-panel p-6 mb-6">
+            <div class="flex justify-between items-center mb-6">
+              <div class="flex flex-col items-center">
+                <div class="text-lg font-bold neon-text-blue">Player X</div>
+                <div id="x-moves-indicator" class="mt-2 flex">
+                  <div class="move-indicator x-active"></div>
+                  <div class="move-indicator x-active"></div>
+                  <div class="move-indicator x-active"></div>
+                </div>
+              </div>
+
+              <div class="font-bold text-white/50">VS</div>
+
+              <div class="flex flex-col items-center">
+                <div class="text-lg font-bold neon-text-pink">Player O</div>
+                <div id="o-moves-indicator" class="mt-2 flex">
+                  <div class="move-indicator o-active"></div>
+                  <div class="move-indicator o-active"></div>
+                  <div class="move-indicator o-active"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="relative">
+              <div id="game-board" class="grid grid-cols-3 gap-3 aspect-square">
+                <div class="game-cell bg-white/10" data-index="0"></div>
+                <div class="game-cell bg-white/10" data-index="1"></div>
+                <div class="game-cell bg-white/10" data-index="2"></div>
+                <div class="game-cell bg-white/10" data-index="3"></div>
+                <div class="game-cell bg-white/10" data-index="4"></div>
+                <div class="game-cell bg-white/10" data-index="5"></div>
+                <div class="game-cell bg-white/10" data-index="6"></div>
+                <div class="game-cell bg-white/10" data-index="7"></div>
+                <div class="game-cell bg-white/10" data-index="8"></div>
+              </div>
+              <div class="grid-lines">
+                <div class="grid-line horizontal"></div>
+                <div class="grid-line horizontal"></div>
+                <div class="grid-line vertical"></div>
+                <div class="grid-line vertical"></div>
+              </div>
+              <div id="win-line" class="win-line hidden"></div>
+            </div>
+          </div>
+
+          <div id="game-status" class="text-center font-bold neon-text-blue">Player X's Turn</div>
+        </div>
+      </div>
+
+      <!-- Game Over Screen -->
+      <div id="game-over-screen" class="screen">
+        <div class="flex flex-col items-center justify-center h-full">
+          <div class="glass-panel p-8 w-full max-w-sm text-center">
+            <h2 class="text-2xl font-bold neon-text-purple mb-2">Game Over</h2>
+            <div id="winner-display" class="text-6xl my-6 neon-text-blue">X</div>
+            <p id="result-message" class="text-xl mb-8 font-bold">Victory for Player X!</p>
+
+            <div class="flex space-x-4">
+              <button id="play-again" class="btn flex-1 py-3 rounded-lg neon-border-blue">
+                Play Again
+              </button>
+              <button id="new-game" class="btn flex-1 py-3 rounded-lg neon-border-pink">
+                New Game
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Game state
+    const gameState = {
+      currentScreen: 'welcome-screen',
+      gameMode: 'classic', // 'classic' or 'twist'
+      opponent: 'friend', // 'friend' or 'computer'
+      difficulty: 'medium', // 'easy', 'medium', or 'impossible'
+      currentPlayer: 'X',
+      board: Array(9).fill(''),
+      moveHistory: [], // For twist mode: track move order
+      gameActive: true,
+      winner: null,
+      winLine: null,
+      soundEnabled: true
+    };
+
+    // DOM Elements
+    const elements = {
+      screens: {
+        welcome: document.getElementById('welcome-screen'),
+        game: document.getElementById('game-screen'),
+        gameOver: document.getElementById('game-over-screen')
+      },
+      classicMode: document.getElementById('classic-mode'),
+      twistMode: document.getElementById('twist-mode'),
+      friendOpponent: document.getElementById('friend-opponent'),
+      computerOpponent: document.getElementById('computer-opponent'),
+      aiDifficultyContainer: document.getElementById('ai-difficulty-container'),
+      difficultyOptions: document.querySelectorAll('.difficulty-option'),
+      difficultySlider: document.querySelector('.difficulty-slider'),
+      startGame: document.getElementById('start-game'),
+      backButton: document.getElementById('back-button'),
+      resetButton: document.getElementById('reset-button'),
+      gameModeDisplay: document.getElementById('game-mode-display'),
+      gameBoard: document.getElementById('game-board'),
+      gameCells: document.querySelectorAll('.game-cell'),
+      gameStatus: document.getElementById('game-status'),
+      winLine: document.getElementById('win-line'),
+      gridLines: document.querySelectorAll('.grid-line'),
+      xMovesIndicator: document.getElementById('x-moves-indicator'),
+      oMovesIndicator: document.getElementById('o-moves-indicator'),
+      winnerDisplay: document.getElementById('winner-display'),
+      resultMessage: document.getElementById('result-message'),
+      playAgain: document.getElementById('play-again'),
+      newGame: document.getElementById('new-game'),
+      particles: document.getElementById('particles')
+    };
+
+    // Winning combinations
+    const winPatterns = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+      [0, 4, 8], [2, 4, 6]             // Diagonals
+    ];
+
+    // Sound effects
+    const sounds = {
+      click: {
+        play: () => playSound('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAbAAkJCQkJCQkJCQkJCQkJCQwMDAwMDAwMDAwMDAwMDAwMD//////////////////8AAAA5TEFNRTMuMTAwAZYAAAAAAAAAABQ4JAMGQgAAQAAAsMDJYrDzAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/+MYxAAAAANIAAAAAExBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV/+MYxDsAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV')
+      },
+      place: {
+        play: () => playSound('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAZIAMDAwMDAwMDAwMDAwMDAwMDBAQEBAQEBAQEBAQEBAQEBAgICAgICAgICAgICAgICA/////////////////////////////////8AAAA5TEFNRTMuMTAwAZYAAAAAAAAAABQ4JAMGQgAAQAAAkiDk8HDTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/+MYxAAAAANIAAAAAExBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV/+MYxDsAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV')
+      },
+      win: {
+        play: () => playSound('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAABAAAAeAAICAgICAgICAgICAgICAgQEBAQEBAQEBAQEBAQEBAgICAgICAgICAgICAgICAoKCgoKCgoKCgoKCgoKCgwMDAwMDAwMDAwMDAwMDA4ODg4ODg4ODg4ODg4ODg//////////////////////////8AAAA5TEFNRTMuMTAwAZYAAAAAAAAAABQ4JAMGQgAAQAAA4OAiQL9QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/+MYxAAAAANIAAAAAExBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV/+MYxDsAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV')
+      },
+      draw: {
+        play: () => playSound('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAABAAAAeAAICAgICAgICAgICAgICAgQEBAQEBAQEBAQEBAQEBAgICAgICAgICAgICAgICAoKCgoKCgoKCgoKCgoKCgwMDAwMDAwMDAwMDAwMDA4ODg4ODg4ODg4ODg4ODg//////////////////////////8AAAA5TEFNRTMuMTAwAZYAAAAAAAAAABQ4JAMGQgAAQAAA4OAiQL9QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/+MYxAAAAANIAAAAAExBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV/+MYxDsAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV')
+      },
+      remove: {
+        play: () => playSound('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA/+M4wAAAAAAAAAAAAEluZm8AAAAPAAAAAwAAAZIAMDAwMDAwMDAwMDAwMDAwMDBAQEBAQEBAQEBAQEBAQEBAgICAgICAgICAgICAgICA/////////////////////////////////8AAAA5TEFNRTMuMTAwAZYAAAAAAAAAABQ4JAMGQgAAQAAAkiDk8HDTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA/+MYxAAAAANIAAAAAExBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV/+MYxDsAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV')
+      }
+    };
+
+    // Play sound function
+    function playSound(base64Sound) {
+      if (gameState.soundEnabled) {
+        const audio = new Audio(base64Sound);
+        audio.volume = 0.3;
+        audio.play().catch(e => console.log("Audio play failed:", e));
+      }
+    }
+
+    // Initialize particles
+    function initParticles() {
+      // Create particles
+      for (let i = 0; i < 50; i++) {
+        createParticle();
+      }
+    }
+
+    function createParticle() {
+      const particle = document.createElement('div');
+      particle.classList.add('particle');
+
+      // Random position
+      const x = Math.random() * window.innerWidth;
+      const y = Math.random() * window.innerHeight;
+
+      particle.style.left = `${x}px`;
+      particle.style.top = `${y}px`;
+
+      // Random size
+      const size = Math.random() * 3 + 1;
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+
+      // Random color
+      const colors = [
+        'var(--neon-blue)',
+        'var(--neon-pink)',
+        'var(--neon-purple)'
+      ];
+      const color = colors[Math.floor(Math.random() * colors.length)];
+      particle.style.backgroundColor = color;
+      particle.style.boxShadow = `0 0 ${size * 2}px ${color}`;
+
+      // Random opacity
+      particle.style.opacity = Math.random() * 0.5 + 0.1;
+
+      // Add to DOM
+      elements.particles.appendChild(particle);
+
+      // Animate
+      animateParticle(particle);
+    }
+
+    function animateParticle(particle) {
+      const duration = Math.random() * 15000 + 10000;
+      const xMove = Math.random() * 100 - 50;
+      const yMove = Math.random() * 100 - 50;
+
+      particle.animate([
+        { transform: 'translate(0, 0)', opacity: particle.style.opacity },
+        { transform: `translate(${xMove}px, ${yMove}px)`, opacity: 0 }
+      ], {
+        duration: duration,
+        easing: 'cubic-bezier(0.25, 0.1, 0.25, 1)'
+      });
+
+      setTimeout(() => {
+        if (elements.particles.contains(particle)) {
+          elements.particles.removeChild(particle);
+          createParticle();
+        }
+      }, duration);
+    }
+
+    // Event Listeners
+    function setupEventListeners() {
+      // Mode selection cards
+      elements.classicMode.addEventListener('click', () => {
+        selectGameMode('classic');
+        sounds.click.play();
+      });
+
+      elements.twistMode.addEventListener('click', () => {
+        selectGameMode('twist');
+        sounds.click.play();
+      });
+
+      // Opponent selection cards
+      elements.friendOpponent.addEventListener('click', () => {
+        selectOpponent('friend');
+        sounds.click.play();
+      });
+
+      elements.computerOpponent.addEventListener('click', () => {
+        selectOpponent('computer');
+        sounds.click.play();
+      });
+
+      // Difficulty options
+      elements.difficultyOptions.forEach((option, index) => {
+        option.addEventListener('click', () => {
+          selectDifficulty(option.dataset.difficulty, index);
+          sounds.click.play();
+        });
+      });
+
+      // Start game
+      elements.startGame.addEventListener('click', () => {
+        startGame();
+        sounds.click.play();
+      });
+
+      // Game controls
+      elements.backButton.addEventListener('click', () => {
+        switchScreen('welcome-screen');
+        sounds.click.play();
+      });
+
+      elements.resetButton.addEventListener('click', () => {
+        resetGame();
+        sounds.click.play();
+      });
+
+      // Game cells
+      elements.gameCells.forEach(cell => {
+        cell.addEventListener('click', () => {
+          handleCellClick(cell);
+        });
+      });
+
+      // Game over screen
+      elements.playAgain.addEventListener('click', () => {
+        resetGame();
+        switchScreen('game-screen');
+        sounds.click.play();
+      });
+
+      elements.newGame.addEventListener('click', () => {
+        switchScreen('welcome-screen');
+        sounds.click.play();
+      });
+    }
+
+    // Select game mode
+    function selectGameMode(mode) {
+      gameState.gameMode = mode;
+
+      if (mode === 'classic') {
+        elements.classicMode.classList.add('selected');
+        elements.twistMode.classList.remove('selected');
+      } else {
+        elements.twistMode.classList.add('selected');
+        elements.classicMode.classList.remove('selected');
+      }
+    }
+
+    // Select opponent
+    function selectOpponent(opponent) {
+      gameState.opponent = opponent;
+
+      if (opponent === 'friend') {
+        elements.friendOpponent.classList.add('selected');
+        elements.computerOpponent.classList.remove('selected');
+        elements.aiDifficultyContainer.classList.add('hidden');
+      } else {
+        elements.computerOpponent.classList.add('selected');
+        elements.friendOpponent.classList.remove('selected');
+        elements.aiDifficultyContainer.classList.remove('hidden');
+      }
+    }
+
+    // Select difficulty
+    function selectDifficulty(difficulty, index) {
+      gameState.difficulty = difficulty;
+
+      // Move the slider
+      elements.difficultySlider.style.left = `${index * 33.33}%`;
+    }
+
+    // Start game
+    function startGame() {
+      resetGameState();
+      updateGameUI();
+      switchScreen('game-screen');
+
+      // Animate grid lines
+      setTimeout(() => {
+        elements.gridLines.forEach(line => {
+          line.classList.add('active');
+        });
+      }, 300);
+
+      // If AI goes first (when AI is O)
+      if (gameState.opponent === 'computer' && gameState.currentPlayer === 'O') {
+        setTimeout(makeAIMove, 800);
+      }
+    }
+
+    // Handle cell click
+    function handleCellClick(cell) {
+      const index = parseInt(cell.dataset.index);
+
+      // Check if cell is already filled or game is over
+      if (gameState.board[index] !== '' || !gameState.gameActive) {
+        return;
+      }
+
+      // Make player move
+      makeMove(index);
+
+      // If game is still active and opponent is AI, make AI move
+      if (gameState.gameActive && gameState.opponent === 'computer') {
+        setTimeout(makeAIMove, 800);
+      }
+    }
+
+    // Make move
+    function makeMove(index) {
+      // In twist mode, check if player already has 3 marks
+      if (gameState.gameMode === 'twist') {
+        const playerMoves = gameState.moveHistory.filter(move => move.player === gameState.currentPlayer);
+
+        if (playerMoves.length >= 3) {
+          // Remove oldest move
+          const oldestMove = playerMoves[0];
+          gameState.board[oldestMove.index] = '';
+
+          // Animate removal
+          const oldCell = document.querySelector(`.game-cell[data-index="${oldestMove.index}"]`);
+          const marker = oldCell.querySelector('.x-marker, .o-marker');
+          if (marker) {
+            marker.classList.add('fade-out');
+            setTimeout(() => {
+              if (oldCell.contains(marker)) {
+                oldCell.removeChild(marker);
+              }
+            }, 500);
+          }
+
+          // Remove from history
+          const oldMoveIndex = gameState.moveHistory.findIndex(move =>
+            move.player === oldestMove.player && move.index === oldestMove.index
+          );
+          gameState.moveHistory.splice(oldMoveIndex, 1);
+
+          sounds.remove.play();
+        }
+      }
+
+      // Place mark
+      gameState.board[index] = gameState.currentPlayer;
+      gameState.moveHistory.push({
+        player: gameState.currentPlayer,
+        index: index
+      });
+
+      // Update UI
+      const cell = document.querySelector(`.game-cell[data-index="${index}"]`);
+      const marker = document.createElement('div');
+
+      if (gameState.currentPlayer === 'X') {
+        marker.classList.add('x-marker', 'x-animation');
+      } else {
+        marker.classList.add('o-marker', 'o-animation');
+      }
+
+      cell.appendChild(marker);
+      sounds.place.play();
+
+      // Check for win or draw
+      checkGameResult();
+
+      // Switch player if game is still active
+      if (gameState.gameActive) {
+        gameState.currentPlayer = gameState.currentPlayer === 'X' ? 'O' : 'X';
+        updateGameStatus();
+        updateMoveIndicators();
+      }
+    }
+
+    // AI Move
+    function makeAIMove() {
+      if (!gameState.gameActive) return;
+
+      let index;
+
+      switch (gameState.difficulty) {
+        case 'easy':
+          index = getEasyAIMove();
+          break;
+        case 'medium':
+          // 70% chance of optimal move, 30% chance of random move
+          index = Math.random() < 0.7 ? getOptimalAIMove() : getEasyAIMove();
+          break;
+        case 'impossible':
+          index = getOptimalAIMove();
+          break;
+        default:
+          index = getOptimalAIMove();
+      }
+
+      makeMove(index);
+    }
+
+    // Easy AI - Random empty cell
+    function getEasyAIMove() {
+      const emptyCells = gameState.board
+        .map((cell, index) => cell === '' ? index : -1)
+        .filter(index => index !== -1);
+
+      return emptyCells[Math.floor(Math.random() * emptyCells.length)];
+    }
+
+    // Optimal AI Move using Minimax
+    function getOptimalAIMove() {
+      // For twist mode, we need a simpler but effective strategy
+      if (gameState.gameMode === 'twist') {
+        return getSmartTwistMove();
+      }
+
+      // For classic mode, use minimax
+      let bestScore = -Infinity;
+      let bestMove;
+
+      for (let i = 0; i < 9; i++) {
+        if (gameState.board[i] === '') {
+          gameState.board[i] = 'O'; // AI is always O
+          let score = minimax(gameState.board, 0, false);
+          gameState.board[i] = '';
+
+          if (score > bestScore) {
+            bestScore = score;
+            bestMove = i;
+          }
+        }
+      }
+
+      return bestMove;
+    }
+
+    // Smart move for Twist mode
+    function getSmartTwistMove() {
+      // First, check if AI can win
+      for (let i = 0; i < 9; i++) {
+        if (gameState.board[i] === '') {
+          gameState.board[i] = 'O';
+          if (checkWinner(gameState.board) === 'O') {
+            gameState.board[i] = '';
+            return i;
+          }
+          gameState.board[i] = '';
+        }
+      }
+
+      // Second, block player's win
+      for (let i = 0; i < 9; i++) {
+        if (gameState.board[i] === '') {
+          gameState.board[i] = 'X';
+          if (checkWinner(gameState.board) === 'X') {
+            gameState.board[i] = '';
+            return i;
+          }
+          gameState.board[i] = '';
+        }
+      }
+
+      // Take center if available
+      if (gameState.board[4] === '') {
+        return 4;
+      }
+
+      // Take corners
+      const corners = [0, 2, 6, 8];
+      const availableCorners = corners.filter(i => gameState.board[i] === '');
+      if (availableCorners.length > 0) {
+        return availableCorners[Math.floor(Math.random() * availableCorners.length)];
+      }
+
+      // Take any available edge
+      const edges = [1, 3, 5, 7];
+      const availableEdges = edges.filter(i => gameState.board[i] === '');
+      if (availableEdges.length > 0) {
+        return availableEdges[Math.floor(Math.random() * availableEdges.length)];
+      }
+
+      // Fallback to random move
+      return getEasyAIMove();
+    }
+
+    // Minimax algorithm for AI
+    function minimax(board, depth, isMaximizing) {
+      // Check terminal states
+      const winner = checkWinner(board);
+      if (winner === 'O') return 10 - depth; // AI wins
+      if (winner === 'X') return depth - 10; // Player wins
+      if (isBoardFull(board)) return 0; // Draw
+
+      if (isMaximizing) {
+        let bestScore = -Infinity;
+        for (let i = 0; i < 9; i++) {
+          if (board[i] === '') {
+            board[i] = 'O';
+            let score = minimax(board, depth + 1, false);
+            board[i] = '';
+            bestScore = Math.max(score, bestScore);
+          }
+        }
+        return bestScore;
+      } else {
+        let bestScore = Infinity;
+        for (let i = 0; i < 9; i++) {
+          if (board[i] === '') {
+            board[i] = 'X';
+            let score = minimax(board, depth + 1, true);
+            board[i] = '';
+            bestScore = Math.min(score, bestScore);
+          }
+        }
+        return bestScore;
+      }
+    }
+
+    // Check if board is full
+    function isBoardFull(board) {
+      return board.every(cell => cell !== '');
+    }
+
+    // Check winner
+    function checkWinner(board) {
+      for (const pattern of winPatterns) {
+        const [a, b, c] = pattern;
+        if (board[a] && board[a] === board[b] && board[a] === board[c]) {
+          return board[a];
+        }
+      }
+      return null;
+    }
+
+    // Check game result
+    function checkGameResult() {
+      // Check for win
+      for (let i = 0; i < winPatterns.length; i++) {
+        const [a, b, c] = winPatterns[i];
+        if (
+          gameState.board[a] &&
+          gameState.board[a] === gameState.board[b] &&
+          gameState.board[a] === gameState.board[c]
+        ) {
+          gameState.gameActive = false;
+          gameState.winner = gameState.currentPlayer;
+          gameState.winLine = i;
+
+          // Draw win line
+          drawWinLine(i);
+          sounds.win.play();
+
+          // Show game over screen after delay
+          setTimeout(() => {
+            showGameOver();
+          }, 1500);
+
+          return;
+        }
+      }
+
+      // Check for draw (only in classic mode)
+      if (gameState.gameMode === 'classic' && !gameState.board.includes('')) {
+        gameState.gameActive = false;
+
+        // Show game over screen after delay
+        setTimeout(() => {
+          showGameOver();
+        }, 1000);
+
+        sounds.draw.play();
+        return;
+      }
+    }
+
+    // Draw win line
+    function drawWinLine(patternIndex) {
+      const pattern = winPatterns[patternIndex];
+      const [a, b, c] = pattern;
+
+      const cellSize = elements.gameCells[0].offsetWidth;
+      const boardRect = elements.gameBoard.getBoundingClientRect();
+
+      const cellA = elements.gameCells[a].getBoundingClientRect();
+      const cellC = elements.gameCells[c].getBoundingClientRect();
+
+      const winLine = elements.winLine;
+      winLine.classList.remove('hidden');
+
+      // Calculate positions relative to the game board
+      const startX = cellA.left - boardRect.left + cellSize / 2;
+      const startY = cellA.top - boardRect.top + cellSize / 2;
+      const endX = cellC.left - boardRect.left + cellSize / 2;
+      const endY = cellC.top - boardRect.top + cellSize / 2;
+
+      // Calculate length and angle
+      const length = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+      const angle = Math.atan2(endY - startY, endX - startX) * (180 / Math.PI);
+
+      // Apply styles
+      winLine.style.width = `${length}px`;
+      winLine.style.left = `${startX}px`;
+      winLine.style.top = `${startY}px`;
+      winLine.style.transform = `rotate(${angle}deg)`;
+    }
+
+    // Show game over screen
+    function showGameOver() {
+      if (gameState.winner) {
+        elements.winnerDisplay.textContent = gameState.winner;
+        elements.winnerDisplay.className = gameState.winner === 'X' ? 'text-6xl my-6 neon-text-blue' : 'text-6xl my-6 neon-text-pink';
+        elements.resultMessage.textContent = `Victory for Player ${gameState.winner}!`;
+      } else {
+        elements.winnerDisplay.textContent = '=';
+        elements.winnerDisplay.className = 'text-6xl my-6 neon-text-purple';
+        elements.resultMessage.textContent = 'It\'s a Draw!';
+      }
+
+      switchScreen('game-over-screen');
+    }
+
+    // Update game status
+    function updateGameStatus() {
+      if (gameState.opponent === 'friend') {
+        elements.gameStatus.textContent = `Player ${gameState.currentPlayer}'s Turn`;
+      } else {
+        elements.gameStatus.textContent = gameState.currentPlayer === 'X' ? 'Your Turn' : 'AI Thinking...';
+      }
+
+      elements.gameStatus.className = gameState.currentPlayer === 'X' ?
+        'text-center font-bold neon-text-blue' :
+        'text-center font-bold neon-text-pink';
+    }
+
+    // Update move indicators
+    function updateMoveIndicators() {
+      // Only show indicators in twist mode
+      if (gameState.gameMode === 'twist') {
+        elements.xMovesIndicator.classList.remove('hidden');
+        elements.oMovesIndicator.classList.remove('hidden');
+
+        // Count current moves
+        const xMoves = gameState.moveHistory.filter(move => move.player === 'X').length;
+        const oMoves = gameState.moveHistory.filter(move => move.player === 'O').length;
+
+        // Update X indicators
+        const xIndicators = elements.xMovesIndicator.querySelectorAll('.move-indicator');
+        xIndicators.forEach((indicator, index) => {
+          if (index < xMoves) {
+            indicator.classList.add('x-active');
+            indicator.classList.remove('inactive');
+          } else {
+            indicator.classList.remove('x-active');
+            indicator.classList.add('inactive');
+          }
+        });
+
+        // Update O indicators
+        const oIndicators = elements.oMovesIndicator.querySelectorAll('.move-indicator');
+        oIndicators.forEach((indicator, index) => {
+          if (index < oMoves) {
+            indicator.classList.add('o-active');
+            indicator.classList.remove('inactive');
+          } else {
+            indicator.classList.remove('o-active');
+            indicator.classList.add('inactive');
+          }
+        });
+      } else {
+        elements.xMovesIndicator.classList.add('hidden');
+        elements.oMovesIndicator.classList.add('hidden');
+      }
+    }
+
+    // Reset game
+    function resetGame() {
+      resetGameState();
+      updateGameUI();
+
+      // If AI goes first
+      if (gameState.opponent === 'computer' && gameState.currentPlayer === 'O') {
+        setTimeout(makeAIMove, 800);
+      }
+    }
+
+    // Reset game state
+    function resetGameState() {
+      gameState.board = Array(9).fill('');
+      gameState.moveHistory = [];
+      gameState.currentPlayer = 'X';
+      gameState.gameActive = true;
+      gameState.winner = null;
+      gameState.winLine = null;
+    }
+
+    // Update game UI
+    function updateGameUI() {
+      // Update game mode display
+      elements.gameModeDisplay.textContent = gameState.gameMode.charAt(0).toUpperCase() + gameState.gameMode.slice(1) + ' Mode';
+
+      // Clear board
+      elements.gameCells.forEach(cell => {
+        while (cell.firstChild) {
+          cell.removeChild(cell.firstChild);
+        }
+      });
+
+      // Hide win line
+      elements.winLine.classList.add('hidden');
+
+      // Update status
+      updateGameStatus();
+
+      // Update move indicators
+      updateMoveIndicators();
+    }
+
+    // Switch screen
+    function switchScreen(screenId) {
+      // Hide all screens
+      Object.values(elements.screens).forEach(screen => {
+        screen.classList.remove('active');
+      });
+
+      // Show requested screen
+      elements.screens[screenId.split('-')[0]].classList.add('active');
+      gameState.currentScreen = screenId;
+    }
+
+    // Initialize game
+    function initGame() {
+      setupEventListeners();
+      initParticles();
+
+      // Set default difficulty
+      selectDifficulty('medium', 1);
+    }
+
+    // Start the game
+    initGame();
+  </script>
+  <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9535972ec53d7a2a',t:'MTc1MDUzMDc2Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+  <iframe height="1" width="1"
+    style="position: absolute; top: 0px; left: 0px; border: none; visibility: hidden;"></iframe>
+
 </body>
+
 </html>
